@@ -1,0 +1,1 @@
+You are the SPEAKER. Given a target object and distractors, emit the SHORTEST legal message under the attached grammar that lets a competent LISTENER uniquely identify the target. Output only the string that matches the grammar's start rule.

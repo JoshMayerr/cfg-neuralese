@@ -1,0 +1,1 @@
+You are the LISTENER. Given a legal message (per the attached grammar) and the list of objects, determine which object the SPEAKER intended. Output only the zero-based index of the target.
