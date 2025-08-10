@@ -27,16 +27,18 @@ def calculate_grammar_complexity(grammar: str) -> Dict[str, float]:
         "avg_rhs_symbols": avg_rhs_symbols
     }
 
-def evaluate(grammar: str, scenes: List[Scene]) -> Metrics:
+def evaluate(grammar: str, scenes: List[Scene], return_examples: bool = False) -> Metrics:
     """
     Evaluate grammar performance on a batch of scenes.
 
     Args:
         grammar: Lark grammar text
         scenes: List of scenes to evaluate on
+        return_examples: Whether to include examples in the return value
 
     Returns:
         Dictionary of metrics including accuracy, length, complexity, etc.
+        If return_examples=True, also includes 'examples' key with sample data
     """
     messages = []
     predictions = []
@@ -91,14 +93,18 @@ def evaluate(grammar: str, scenes: List[Scene]) -> Metrics:
     parse_fail_rate = parse_failures / max(1, n_scenes)
     grammar_complexity = calculate_grammar_complexity(grammar)
 
-    return {
+    result = {
         "accuracy": accuracy,
         "avg_msg_chars": avg_msg_chars,
         "collisions": collision_rate,
         "parse_fail_rate": parse_fail_rate,
         "grammar_complexity": grammar_complexity,
-        "examples": examples[:5],  # Keep first 5 examples for analysis
         "n_scenes": n_scenes,
         "n_correct": correct,
         "n_parse_failures": parse_failures
     }
+
+    if return_examples:
+        result["examples"] = examples[:5]  # Keep first 5 examples for analysis
+
+    return result

@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "mutations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "op": { "type": "string" },
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "name": { "type": "string" },
+          "pattern": { "type": "string" },
+          "lhs": { "type": "string" },
+          "rhs": { "type": "string" },
+          "args": { "type": "array" }
+        },
+        "required": ["op"]
+      }
+    },
+    "speaker_fewshot": { "type": "array" },
+    "listener_fewshot": { "type": "array" }
+  },
+  "required": ["mutations", "speaker_fewshot", "listener_fewshot"]
+}
