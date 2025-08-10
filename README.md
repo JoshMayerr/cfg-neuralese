@@ -1,17 +1,35 @@
-# CFG-Neuralese: Evolutionary Grammar Optimization
+# Creating "neuralese" with context free grammars (CFG) and gpt5
 
-## Overview
+### project goal
 
-CFG-Neuralese is an AI system that **evolves context-free grammars** to optimize communication between GPT-5 agents. The system automatically discovers shorter, more efficient message formats while maintaining high accuracy.
+this is a multi agent system running a loop that evolves context-free grammars to optimize communication between GPT-5 agents. The system automatically discovers shorter, more efficient message formats while maintaining high accuracy.
 
-## 🎯 What It Does
+### why its interesting
+
+this is a constrained example on a mini game. but this is typical in other research. it can extend to a real grammar for an entire language. this shows that if you wanted to build / learn a cfg to do neuralese you probably can. you just need to run a bigger experiment for longer
+
+### commands for demo
+
+```bash
+uv run python main.py --rounds 3 --batch-size 5 # run main loop to optimize
+```
+
+```bash
+uv run test_step3.py # show an example guessing round
+```
+
+```bash
+uv run scripts/qa.py # play a guessing game based on final CFG
+```
+
+### What It Does
 
 - **Speaker Agent**: Generates messages under CFG constraints to describe target objects
 - **Listener Agent**: Interprets messages to identify target objects from distractors
 - **Proposer Agent**: Suggests grammar mutations to optimize message length vs accuracy
 - **Evolutionary Loop**: Automatically improves grammars over multiple rounds
 
-## 🚀 Current Status
+## Current Status
 
 **Phase 2 Complete**: Evolutionary loop with proposer integration is working!
 
@@ -24,22 +42,24 @@ CFG-Neuralese is an AI system that **evolves context-free grammars** to optimize
 ## 🏗️ System Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Scene Gen     │───▶│  Speaker Agent  │───▶│   Message       │
-│   (K objects)   │    │  (CFG-constrained)│    │   (CFG-compliant)│
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Evaluation    │◀───│  Listener Agent │◀───│   Scene + Msg   │
-│   (Metrics)     │    │  (Target ID)    │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │
-         ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Proposer      │───▶│  Mutation       │───▶│  New Grammar    │
-│   (AI-powered)  │    │  Engine         │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ Scene Gen │───▶│ Speaker Agent │───▶│ Message │
+│ (K objects) │ │ (CFG-constrained)│ │ (CFG-compliant)│
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+│ │ │
+▼ ▼ ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ Evaluation │◀───│ Listener Agent │◀───│ Scene + Msg │
+│ (Metrics) │ │ (Target ID) │ │ │
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+│
+▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ Proposer │───▶│ Mutation │───▶│ New Grammar │
+│ (AI-powered) │ │ Engine │ │ │
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+
 ```
 
 ## 🎮 How to Use
