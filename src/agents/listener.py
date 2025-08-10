@@ -1,49 +1,25 @@
-from typing import List
-from ..types import Scene
+from typing import Dict, List, Optional
 from .openai_client import OpenAIClient
 
 # Inline prompt - no external file dependency
-LISTENER_PROMPT = """You are the LISTENER. Given a legal message (per the attached grammar) and the list of objects, determine which object the SPEAKER intended. Output only the zero-based index of the target."""
+LISTENER_PROMPT = """You are the LISTENER. Given a legal message (per the attached grammar) and the list of objects, determine which object the SPEAKER intended. Output only the zero-based index of the target.
 
-def format_scene_for_listener(scene: Scene, message: str) -> str:
-    """Format scene and message for listener prompt."""
-    lines = [f"Scene with {len(scene['objects'])} objects:"]
+Output only the zero-based index digit."""
 
-    # Add all objects with their indices
-    for i, obj in enumerate(scene['objects']):
-        lines.append(f"  Index {i}: Color: {obj['color']}, Shape: {obj['shape']}, Size: {obj['size']}")
+def _fewshot_blocks_listener(items: Optional[List[Dict]]) -> List[Dict[str,str]]:
+    if not items: return []
+    blocks = []
+    for ex in items:
+        blocks.append({"role":"user","content": f"Message: {ex['message']}\nOutput only the index."})
+        blocks.append({"role":"assistant","content": str(ex["answer"])})
+    return blocks
 
-    lines.append(f"\nSpeaker message: {message}")
-    lines.append("\nWhich object is the speaker referring to? Respond with just the index number.")
-
-    return "\n".join(lines)
-
-def get_listener_prediction(grammar: str, scene: Scene, message: str) -> int:
-    """
-    Get listener's prediction for which object the message refers to.
-
-    Args:
-        grammar: Lark grammar text (for understanding/context)
-        scene: Scene with objects
-        message: Message from speaker
-
-    Returns:
-        Predicted index of target object
-    """
-    scene_text = format_scene_for_listener(scene, message)
-
-    messages = [
-        {
-            "role": "system",
-            "content": f"{LISTENER_PROMPT}\n\nThe message follows this grammar:\n{grammar}"
-        },
-        {
-            "role": "user",
-            "content": scene_text
-        }
-    ]
-
-    # Use new OpenAIClient with index constraints
+def listen(scene: Dict, message: str, k: int, *, fewshots: Optional[List[Dict]]=None, temperature: float=0.2) -> int:
     client = OpenAIClient()
-    k = len(scene['objects'])  # Total number of objects
-    return client.emit_index(messages, k)
+    objs = [f"{i}: color={o['color']}, shape={o['shape']}, size={o['size']}" for i,o in enumerate(scene["objects"])]
+    messages = [
+        {"role":"system", "content": LISTENER_PROMPT},
+        *_fewshot_blocks_listener(fewshots),
+        {"role":"user","content": "Objects:\n" + "\n".join(objs) + f"\nMessage: " + message + "\nOutput only the zero-based index."}
+    ]
+    return client.emit_index(messages, k=k, temperature=temperature)

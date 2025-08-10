@@ -1,5 +1,7 @@
 import os
 from typing import Dict, Any
+from pathlib import Path
+import json
 
 def load_base_grammar() -> str:
     """Load the base grammar from file."""
@@ -40,3 +42,14 @@ def grammar_stats(grammar: str) -> Dict[str, Any]:
         "rules": len(rules),
         "characters": len(grammar)
     }
+
+def load_grammar(path: str) -> str:
+    return Path(path).read_text()
+
+def save_grammar(text: str, path: str) -> None:
+    Path(path).write_text(text)
+
+def load_fewshots(path: str) -> Dict[str, Any]:
+    p = Path(path)
+    if not p.exists(): return {"speaker": [], "listener": []}
+    return json.loads(p.read_text())

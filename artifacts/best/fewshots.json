@@ -1,0 +1,30 @@
+{
+  "speaker": [
+    {
+      "scene": {
+        "color": "white",
+        "shape": "triangle",
+        "size": "medium"
+      },
+      "message": "size:medium"
+    },
+    {
+      "scene": {
+        "color": "red",
+        "shape": "circle",
+        "size": "small"
+      },
+      "message": "color:red"
+    }
+  ],
+  "listener": [
+    {
+      "message": "size:medium",
+      "answer": 3
+    },
+    {
+      "message": "color:red",
+      "answer": 0
+    }
+  ]
+}

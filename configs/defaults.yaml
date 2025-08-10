@@ -18,3 +18,7 @@ guards:
   max_depth: 8
   max_msg_chars: 32
   min_entropy_bits: 2.0
+
+# Paths for final evolved language
+final_grammar_path: src/grammar/final_grammar.lark
+fewshots_path: fewshots/final_fewshots.json

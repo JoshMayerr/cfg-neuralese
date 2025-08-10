@@ -1,54 +1,28 @@
-from typing import List
-from ..types import Scene, SceneObj
+from typing import Dict, List, Optional
 from .openai_client import OpenAIClient
 
 # Inline prompt - no external file dependency
-SPEAKER_PROMPT = """You are the SPEAKER. Given a target object and distractors, emit the SHORTEST legal message under the attached grammar that lets a competent LISTENER uniquely identify the target. Output only the string that matches the grammar's start rule."""
+SPEAKER_PROMPT = """You are the SPEAKER. Given a target object and distractors, emit the SHORTEST legal message under the attached grammar that lets a competent LISTENER uniquely identify the target. Output only the string that matches the grammar's start rule.
 
-def format_scene(scene: Scene) -> str:
-    """Format scene for speaker prompt."""
-    target = scene["objects"][scene["target_idx"]]
-    distractors = [obj for i, obj in enumerate(scene["objects"]) if i != scene["target_idx"]]
+Use only terminals allowed by the grammar. Do not emit English words or slot names unless present in the grammar."""
 
-    lines = [f"Target object (index {scene['target_idx']}):"]
-    lines.append(f"  Color: {target['color']}, Shape: {target['shape']}, Size: {target['size']}")
+def _fewshot_blocks_speaker(items: Optional[List[Dict]]) -> List[Dict[str,str]]:
+    if not items: return []
+    blocks = []
+    for ex in items:
+        o = ex["scene"]
+        scene = f"0: color={o['color']}, shape={o['shape']}, size={o['size']}"
+        blocks.append({"role":"user","content": f"Objects:\n{scene}\nTarget index: 0\nOutput only the message."})
+        blocks.append({"role":"assistant","content": ex["message"]})
+    return blocks
 
-    if distractors:
-        lines.append("\nDistractor objects:")
-        for i, obj in enumerate(distractors):
-            lines.append(f"  Index {i}: Color: {obj['color']}, Shape: {obj['shape']}, Size: {obj['size']}")
-
-    return "\n".join(lines)
-
-def get_speaker_message(grammar: str, scene: Scene) -> str:
-    """
-    Get message from speaker for given scene using grammar constraints.
-
-    Args:
-        grammar: Lark grammar text
-        scene: Scene with target and distractors
-
-    Returns:
-        Message string that should match the grammar's start rule
-    """
-    scene_text = format_scene(scene)
-
-    messages = [
-        {
-            "role": "system",
-            "content": SPEAKER_PROMPT
-        },
-        {
-            "role": "user",
-            "content": f"{scene_text}\n\nRemember: Use the SHORTEST possible message that uniquely identifies the target."
-        }
-    ]
-
-    # Use new OpenAIClient with grammar constraints
+def speak(scene: Dict, grammar_text: str, *, fewshots: Optional[List[Dict]]=None, temperature: float=0.4) -> str:
     client = OpenAIClient()
-    return client.emit_with_grammar(
-        messages=messages,
-        grammar_text=grammar,
-        tool_name="emit_message",
-        syntax="lark"
-    )
+    objs = [f"{i}: color={o['color']}, shape={o['shape']}, size={o['size']}" for i,o in enumerate(scene["objects"])]
+    target = scene["target_idx"]
+    messages = [
+        {"role":"system", "content": SPEAKER_PROMPT},
+        * _fewshot_blocks_speaker(fewshots),
+        {"role":"user","content": "Objects:\n" + "\n".join(objs) + f"\nTarget index: {target}\nOutput only the message."}
+    ]
+    return client.emit_with_grammar(messages, grammar_text, syntax="lark", temperature=temperature)

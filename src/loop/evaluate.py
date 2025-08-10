@@ -1,8 +1,8 @@
 from typing import Dict, List, Tuple
 from ..types import Scene, Metrics
 from ..env.scoring import avg_len, count_collisions
-from ..agents.speaker import get_speaker_message
-from ..agents.listener import get_listener_prediction
+from ..agents.speaker import speak
+from ..agents.listener import listen
 
 def calculate_grammar_complexity(grammar: str) -> Dict[str, float]:
     """Calculate basic grammar complexity metrics."""
@@ -50,11 +50,11 @@ def evaluate(grammar: str, scenes: List[Scene], return_examples: bool = False) -
     for scene in scenes:
         try:
             # Get speaker message
-            message = get_speaker_message(grammar, scene)
+            message = speak(scene, grammar)
             messages.append(message)
 
             # Get listener prediction
-            pred_idx = get_listener_prediction(grammar, scene, message)
+            pred_idx = listen(scene, message, len(scene["objects"]))
             predictions.append(pred_idx)
 
             # Check if correct

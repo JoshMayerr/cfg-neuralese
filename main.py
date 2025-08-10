@@ -9,8 +9,10 @@ import argparse
 import json
 import yaml
 import csv
+import random
 from pathlib import Path
 from datetime import datetime
+from typing import List, Dict
 
 from src.env.scenes import make_batch
 from src.loop.evaluate import evaluate
@@ -18,6 +20,25 @@ from src.grammar.utils import load_base_grammar
 from src.env.scoring import score_fn
 from src.agents.proposer import propose
 from src.grammar.mutations import apply_patch
+
+def make_run_dir(base: str) -> Path:
+    run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_dir = Path(base) / f"run_{run_id}"
+    (run_dir / "grammars").mkdir(parents=True, exist_ok=True)
+    (run_dir / "metrics").mkdir(parents=True, exist_ok=True)
+    (run_dir / "proposer").mkdir(parents=True, exist_ok=True)
+    return run_dir
+
+def fewshots_from_examples(examples: List[Dict]) -> Dict[str, List[Dict]]:
+    # grab up to 2 correct examples for tiny demo-time few-shots
+    spk, lst = [], []
+    for ex in examples:
+        if ex.get("correct") and len(spk) < 2:
+            # speaker few-shot expects scene + message
+            spk.append({"scene": ex["scene"]["objects"][ex["scene"]["target_idx"]], "message": ex["message"]})
+            # listener few-shot expects message + answer index
+            lst.append({"message": ex["message"], "answer": ex["prediction"]})
+    return {"speaker": spk, "listener": lst}
 
 def load_config(config_path: str = "configs/defaults.yaml"):
     """Load configuration from YAML file."""
@@ -88,6 +109,16 @@ def main():
     if args.batch_size:
         config["batch_size"] = args.batch_size
 
+    # Seed for reproducibility (optional)
+    random.seed(42)
+
+    # Make a unique run directory and point artifacts there
+    run_dir = make_run_dir(args.artifacts_dir)
+    print(f"🗂️  Run dir: {run_dir}")
+
+    # Snapshot config
+    (Path(run_dir) / "config.json").write_text(json.dumps(config, indent=2))
+
     print(f"🧠 CFG-Neuralese Evolutionary Evaluation")
     print(f"📊 Batch size: {config['batch_size']}")
     print(f"🎯 K objects: {config['k_objects']}")
@@ -100,8 +131,10 @@ def main():
     print(grammar)
     print()
 
-    # Create artifacts directory
-    Path(args.artifacts_dir).mkdir(exist_ok=True)
+    # Track "best so far" and save proposer I/O
+    best_score = float("-inf")
+    best_grammar = None
+    best_fewshots = {"speaker": [], "listener": []}
 
     # Evolutionary loop
     for round_idx in range(args.rounds):
@@ -118,7 +151,9 @@ def main():
         )
 
         # Evaluate current grammar
-        metrics, examples = evaluate(grammar, scenes, return_examples=True)
+        result = evaluate(grammar, scenes, return_examples=True)
+        metrics = result
+        examples = result.get("examples", [])
 
         # Calculate composite score
         composite_score = score_fn(
@@ -139,7 +174,14 @@ def main():
         print(f"  Composite Score: {composite_score:.3f}")
 
         # Log round results
-        log_round_results(round_idx, metrics, grammar, args.artifacts_dir)
+        log_round_results(round_idx, metrics, grammar, str(run_dir))
+
+        # Update best-so-far bundle
+        if composite_score > best_score:
+            best_score = composite_score
+            best_grammar = grammar
+            # derive tiny few-shots from this round's successful examples
+            best_fewshots = fewshots_from_examples(examples)
 
         # Check stopping criteria
         if metrics['accuracy'] >= 0.97 and metrics['avg_msg_chars'] <= 10:
@@ -153,9 +195,25 @@ def main():
 
         # Ask proposer for mutations
         print(f"\n🤖 Asking proposer for mutations...")
+
+        # create a compact proposer input text for provenance
+        proposer_input_text = (
+            "=== Current Grammar ===\n" + grammar + "\n\n" +
+            "=== Metrics ===\n" + json.dumps(metrics, indent=2) + "\n\n" +
+            "=== Examples (first 5) ===\n" + json.dumps(examples[:5], indent=2)
+        )
+
         try:
-            patch = propose(grammar, metrics, examples[:5])
+            # Extract messages and predictions from examples for proposer
+            messages = [ex["message"] for ex in examples[:5]]
+            predictions = [ex["prediction"] for ex in examples[:5]]
+
+            patch = propose(grammar, metrics, examples[:5], messages, predictions)
             print(f"✅ Proposer returned {len(patch.get('mutations', []))} mutations")
+
+            # Save proposer I/O
+            (Path(run_dir) / "proposer" / f"round_{round_idx:03d}_in.txt").write_text(proposer_input_text)
+            (Path(run_dir) / "proposer" / f"round_{round_idx:03d}_out.json").write_text(json.dumps(patch, indent=2))
 
             # Quick validation
             ok_ops = {"rename_terminal", "remove_separators", "restrict_terminal", "replace_rule"}
@@ -183,32 +241,42 @@ def main():
             grammar = grammar_candidate
             print("✅ Patch accepted!")
 
+            # Save current grammar for this round
+            (Path(run_dir) / "grammars" / f"round_{round_idx:03d}.lark").write_text(grammar)
+
         except Exception as e:
             print(f"❌ Proposer failed: {e}")
             continue
 
         print()  # Empty line between rounds
 
-    # Final evaluation
+    # Final evaluation (skip if we already have final results from stopping criteria)
     print(f"\n🏁 Final Results")
     print("=" * 50)
 
-    final_scenes = make_batch(
-        colors=config["attributes"]["color"],
-        shapes=config["attributes"]["shape"],
-        sizes=config["attributes"]["size"],
-        batch_size=config["batch_size"],
-        k=config["k_objects"]
-    )
-
-    final_metrics = evaluate(grammar, final_scenes)
-    final_score = score_fn(
-        acc=final_metrics["accuracy"],
-        avg_chars=final_metrics["avg_msg_chars"],
-        complexity=final_metrics["grammar_complexity"],
-        collisions=final_metrics["collisions"],
-        lambdas=config["lambdas"]
-    )
+    # If we stopped early due to criteria, use the last round's results
+    if round_idx < args.rounds - 1:
+        print("✅ Stopped early due to criteria - using last round results")
+        final_metrics = metrics  # Use metrics from the last completed round
+        final_score = composite_score
+    else:
+        # Only do final evaluation if we went through all rounds
+        print("🔄 Completed all rounds - doing final evaluation...")
+        final_scenes = make_batch(
+            colors=config["attributes"]["color"],
+            shapes=config["attributes"]["shape"],
+            sizes=config["attributes"]["size"],
+            batch_size=config["batch_size"],
+            k=config["k_objects"]
+        )
+        final_metrics = evaluate(grammar, final_scenes)
+        final_score = score_fn(
+            acc=final_metrics["accuracy"],
+            avg_chars=final_metrics["avg_msg_chars"],
+            complexity=final_metrics["grammar_complexity"],
+            collisions=final_metrics["collisions"],
+            lambdas=config["lambdas"]
+        )
 
     print(f"📈 Final Metrics:")
     print(f"  Accuracy: {final_metrics['accuracy']:.3f}")
@@ -219,9 +287,18 @@ def main():
     print(grammar)
 
     # Save final grammar
-    final_grammar_path = Path(args.artifacts_dir) / "final_grammar.lark"
+    final_grammar_path = Path(run_dir) / "final_grammar.lark"
     final_grammar_path.write_text(grammar)
     print(f"\n💾 Final grammar saved to: {final_grammar_path}")
+
+    # Also export "best" bundle for the show
+    best_dir = Path("artifacts") / "best"
+    best_dir.mkdir(parents=True, exist_ok=True)
+    (best_dir / "grammar.lark").write_text(best_grammar or grammar)
+    (best_dir / "fewshots.json").write_text(json.dumps(best_fewshots, indent=2))
+
+    print(f"💾 Best grammar → {best_dir / 'grammar.lark'}")
+    print(f"💾 Few-shots    → {best_dir / 'fewshots.json'}")
 
 if __name__ == "__main__":
     main()

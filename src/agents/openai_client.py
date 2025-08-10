@@ -43,11 +43,11 @@ class OpenAIClient:
         return out.strip()
 
     # --- convenience: listener index constrained to [0..K-1] via regex ---
-    def emit_index(self, messages: List[Dict[str, str]], k: int) -> int:
+    def emit_index(self, messages: List[Dict[str, str]], k: int, *, temperature: float = 0.2) -> int:
         assert k > 0
         # Use the simple grammar that we know works
         grammar = "start: /[0-3]/"
-        s = self.emit_with_grammar(messages, grammar, tool_name="emit_index", syntax="lark")
+        s = self.emit_with_grammar(messages, grammar, tool_name="emit_index", syntax="lark", temperature=temperature)
         return int(s)
 
     # --- freeform output via custom tool (for Proposer patches) ---
