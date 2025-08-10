@@ -184,7 +184,7 @@ def main():
             best_fewshots = fewshots_from_examples(examples)
 
         # Check stopping criteria (made stricter to force proposer to work)
-        if metrics['accuracy'] >= 0.97 and metrics['avg_msg_chars'] <= 6:
+        if metrics['accuracy'] >= 0.97 and metrics['avg_msg_chars'] <= 4:
             print("✅ Stopping criteria met!")
             break
 

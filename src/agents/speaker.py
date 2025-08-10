@@ -10,9 +10,14 @@ def _fewshot_blocks_speaker(items: Optional[List[Dict]]) -> List[Dict[str,str]]:
     if not items: return []
     blocks = []
     for ex in items:
-        o = ex["scene"]
-        scene = f"0: color={o['color']}, shape={o['shape']}, size={o['size']}"
-        blocks.append({"role":"user","content": f"Objects:\n{scene}\nTarget index: 0\nOutput only the message."})
+        # The fewshots data has scene nested under "scene" key
+        scene_data = ex["scene"]
+        objects_desc = []
+        for i, obj in enumerate(scene_data["objects"]):
+            objects_desc.append(f"{i}: color={obj['color']}, shape={obj['shape']}, size={obj['size']}")
+
+        scene_text = "\n".join(objects_desc)
+        blocks.append({"role":"user","content": f"Objects:\n{scene_text}\nTarget index: {scene_data['target_idx']}\nOutput only the message."})
         blocks.append({"role":"assistant","content": ex["message"]})
     return blocks
 

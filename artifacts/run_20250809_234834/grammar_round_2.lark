@@ -1,0 +1,5 @@
+start: msg
+msg: phrase (";" phrase)*
+phrase: slot value
+slot: "C" | "H" | "Z"
+value: /[a-z]+/

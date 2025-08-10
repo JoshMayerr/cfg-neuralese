@@ -1,0 +1,26 @@
+{
+  "mutations": [
+    {
+      "op": "rename_terminal",
+      "from": "color",
+      "to": "c"
+    },
+    {
+      "op": "rename_terminal",
+      "from": "shape",
+      "to": "h"
+    },
+    {
+      "op": "rename_terminal",
+      "from": "size",
+      "to": "z"
+    },
+    {
+      "op": "replace_rule",
+      "rule": "phrase",
+      "definition": "slot value"
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

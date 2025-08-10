@@ -1,0 +1,428 @@
+=== Current Grammar ===
+start: msg
+msg: phrase (";" phrase)*
+phrase: slot ":" value
+slot: "color" | "shape" | "size"
+value: /[a-z]+/
+
+
+=== Metrics ===
+{
+  "accuracy": 1.0,
+  "avg_msg_chars": 14.3,
+  "collisions": 0.2,
+  "parse_fail_rate": 0.0,
+  "grammar_complexity": {
+    "productions": 5,
+    "avg_rhs_symbols": 2.4
+  },
+  "n_scenes": 20,
+  "n_correct": 20,
+  "n_parse_failures": 0,
+  "examples": [
+    {
+      "scene": {
+        "target_idx": 1,
+        "objects": [
+          {
+            "color": "white",
+            "shape": "diamond",
+            "size": "small"
+          },
+          {
+            "color": "white",
+            "shape": "circle",
+            "size": "small"
+          },
+          {
+            "color": "black",
+            "shape": "star",
+            "size": "small"
+          },
+          {
+            "color": "blue",
+            "shape": "square",
+            "size": "small"
+          },
+          {
+            "color": "white",
+            "shape": "triangle",
+            "size": "medium"
+          },
+          {
+            "color": "red",
+            "shape": "circle",
+            "size": "medium"
+          }
+        ]
+      },
+      "message": "size:small;shape:circle",
+      "prediction": 1,
+      "correct": true
+    },
+    {
+      "scene": {
+        "target_idx": 0,
+        "objects": [
+          {
+            "color": "blue",
+            "shape": "star",
+            "size": "large"
+          },
+          {
+            "color": "green",
+            "shape": "triangle",
+            "size": "medium"
+          },
+          {
+            "color": "black",
+            "shape": "square",
+            "size": "huge"
+          },
+          {
+            "color": "red",
+            "shape": "square",
+            "size": "huge"
+          },
+          {
+            "color": "black",
+            "shape": "hexagon",
+            "size": "small"
+          },
+          {
+            "color": "blue",
+            "shape": "triangle",
+            "size": "small"
+          }
+        ]
+      },
+      "message": "shape:star",
+      "prediction": 0,
+      "correct": true
+    },
+    {
+      "scene": {
+        "target_idx": 4,
+        "objects": [
+          {
+            "color": "white",
+            "shape": "hexagon",
+            "size": "large"
+          },
+          {
+            "color": "black",
+            "shape": "circle",
+            "size": "huge"
+          },
+          {
+            "color": "green",
+            "shape": "hexagon",
+            "size": "large"
+          },
+          {
+            "color": "yellow",
+            "shape": "circle",
+            "size": "large"
+          },
+          {
+            "color": "red",
+            "shape": "diamond",
+            "size": "huge"
+          },
+          {
+            "color": "red",
+            "shape": "hexagon",
+            "size": "large"
+          }
+        ]
+      },
+      "message": "shape:diamond",
+      "prediction": 4,
+      "correct": true
+    },
+    {
+      "scene": {
+        "target_idx": 1,
+        "objects": [
+          {
+            "color": "red",
+            "shape": "star",
+            "size": "large"
+          },
+          {
+            "color": "red",
+            "shape": "diamond",
+            "size": "medium"
+          },
+          {
+            "color": "blue",
+            "shape": "diamond",
+            "size": "small"
+          },
+          {
+            "color": "green",
+            "shape": "circle",
+            "size": "medium"
+          },
+          {
+            "color": "blue",
+            "shape": "triangle",
+            "size": "large"
+          },
+          {
+            "color": "yellow",
+            "shape": "diamond",
+            "size": "large"
+          }
+        ]
+      },
+      "message": "color:red;size:medium",
+      "prediction": 1,
+      "correct": true
+    },
+    {
+      "scene": {
+        "target_idx": 1,
+        "objects": [
+          {
+            "color": "black",
+            "shape": "diamond",
+            "size": "medium"
+          },
+          {
+            "color": "white",
+            "shape": "triangle",
+            "size": "small"
+          },
+          {
+            "color": "blue",
+            "shape": "star",
+            "size": "huge"
+          },
+          {
+            "color": "yellow",
+            "shape": "triangle",
+            "size": "small"
+          },
+          {
+            "color": "green",
+            "shape": "diamond",
+            "size": "medium"
+          },
+          {
+            "color": "blue",
+            "shape": "circle",
+            "size": "large"
+          }
+        ]
+      },
+      "message": "color:white",
+      "prediction": 1,
+      "correct": true
+    }
+  ]
+}
+
+=== Examples (first 5) ===
+[
+  {
+    "scene": {
+      "target_idx": 1,
+      "objects": [
+        {
+          "color": "white",
+          "shape": "diamond",
+          "size": "small"
+        },
+        {
+          "color": "white",
+          "shape": "circle",
+          "size": "small"
+        },
+        {
+          "color": "black",
+          "shape": "star",
+          "size": "small"
+        },
+        {
+          "color": "blue",
+          "shape": "square",
+          "size": "small"
+        },
+        {
+          "color": "white",
+          "shape": "triangle",
+          "size": "medium"
+        },
+        {
+          "color": "red",
+          "shape": "circle",
+          "size": "medium"
+        }
+      ]
+    },
+    "message": "size:small;shape:circle",
+    "prediction": 1,
+    "correct": true
+  },
+  {
+    "scene": {
+      "target_idx": 0,
+      "objects": [
+        {
+          "color": "blue",
+          "shape": "star",
+          "size": "large"
+        },
+        {
+          "color": "green",
+          "shape": "triangle",
+          "size": "medium"
+        },
+        {
+          "color": "black",
+          "shape": "square",
+          "size": "huge"
+        },
+        {
+          "color": "red",
+          "shape": "square",
+          "size": "huge"
+        },
+        {
+          "color": "black",
+          "shape": "hexagon",
+          "size": "small"
+        },
+        {
+          "color": "blue",
+          "shape": "triangle",
+          "size": "small"
+        }
+      ]
+    },
+    "message": "shape:star",
+    "prediction": 0,
+    "correct": true
+  },
+  {
+    "scene": {
+      "target_idx": 4,
+      "objects": [
+        {
+          "color": "white",
+          "shape": "hexagon",
+          "size": "large"
+        },
+        {
+          "color": "black",
+          "shape": "circle",
+          "size": "huge"
+        },
+        {
+          "color": "green",
+          "shape": "hexagon",
+          "size": "large"
+        },
+        {
+          "color": "yellow",
+          "shape": "circle",
+          "size": "large"
+        },
+        {
+          "color": "red",
+          "shape": "diamond",
+          "size": "huge"
+        },
+        {
+          "color": "red",
+          "shape": "hexagon",
+          "size": "large"
+        }
+      ]
+    },
+    "message": "shape:diamond",
+    "prediction": 4,
+    "correct": true
+  },
+  {
+    "scene": {
+      "target_idx": 1,
+      "objects": [
+        {
+          "color": "red",
+          "shape": "star",
+          "size": "large"
+        },
+        {
+          "color": "red",
+          "shape": "diamond",
+          "size": "medium"
+        },
+        {
+          "color": "blue",
+          "shape": "diamond",
+          "size": "small"
+        },
+        {
+          "color": "green",
+          "shape": "circle",
+          "size": "medium"
+        },
+        {
+          "color": "blue",
+          "shape": "triangle",
+          "size": "large"
+        },
+        {
+          "color": "yellow",
+          "shape": "diamond",
+          "size": "large"
+        }
+      ]
+    },
+    "message": "color:red;size:medium",
+    "prediction": 1,
+    "correct": true
+  },
+  {
+    "scene": {
+      "target_idx": 1,
+      "objects": [
+        {
+          "color": "black",
+          "shape": "diamond",
+          "size": "medium"
+        },
+        {
+          "color": "white",
+          "shape": "triangle",
+          "size": "small"
+        },
+        {
+          "color": "blue",
+          "shape": "star",
+          "size": "huge"
+        },
+        {
+          "color": "yellow",
+          "shape": "triangle",
+          "size": "small"
+        },
+        {
+          "color": "green",
+          "shape": "diamond",
+          "size": "medium"
+        },
+        {
+          "color": "blue",
+          "shape": "circle",
+          "size": "large"
+        }
+      ]
+    },
+    "message": "color:white",
+    "prediction": 1,
+    "correct": true
+  }
+]

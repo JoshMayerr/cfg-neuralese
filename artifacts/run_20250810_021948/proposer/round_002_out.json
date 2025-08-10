@@ -1,0 +1,20 @@
+{
+  "mutations": [
+    {
+      "op": "replace_rule",
+      "name": "phrase",
+      "definition": "slot value | value"
+    },
+    {
+      "op": "remove_separators",
+      "between": [
+        [
+          "slot",
+          "value"
+        ]
+      ]
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

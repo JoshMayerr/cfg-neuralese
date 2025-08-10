@@ -1,0 +1,11 @@
+{
+  "mutations": [
+    {
+      "op": "replace_rule",
+      "name": "value",
+      "definition": "value: /[a-z]+/ | /[CPZ][a-z]/"
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

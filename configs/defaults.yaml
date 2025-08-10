@@ -1,6 +1,6 @@
 model: gpt-5
-batch_size: 100
-k_objects: 4
+batch_size: 15
+k_objects: 6
 attributes:
   color: [red, blue, green, yellow, black, white]
   shape: [circle, square, triangle, star, hexagon, diamond]

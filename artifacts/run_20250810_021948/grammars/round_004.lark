@@ -2,4 +2,4 @@ start: msg
 msg: value+
 phrase: value
 slot: "C" | "P" | "Z"
-value: /[a-z]/
+value: /[a-z]+/

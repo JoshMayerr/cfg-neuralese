@@ -1,0 +1,18 @@
+{
+  "mutations": [
+    {
+      "op": "replace_rule",
+      "rule": "value",
+      "definition": "/[a-z]/"
+    },
+    {
+      "op": "remove_separators",
+      "target": "msg",
+      "separators": [
+        " "
+      ]
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

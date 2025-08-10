@@ -1,0 +1,16 @@
+{
+  "mutations": [
+    {
+      "op": "remove_separators",
+      "rule": "msg",
+      "separator": ";"
+    },
+    {
+      "op": "replace_rule",
+      "name": "phrase",
+      "definition": "value | slot value"
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

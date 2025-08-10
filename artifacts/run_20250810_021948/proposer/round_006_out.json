@@ -1,0 +1,18 @@
+{
+  "mutations": [
+    {
+      "op": "restrict_terminal",
+      "name": "value",
+      "pattern": "/[a-z]/"
+    },
+    {
+      "op": "remove_separators",
+      "between": [
+        "value",
+        "value"
+      ]
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

@@ -1,0 +1,5 @@
+start: msg
+msg: (slot? value)+
+phrase: slot value | value
+slot: "C" | "P" | "Z"
+value: /[a-z]+/

@@ -91,7 +91,7 @@ def offline_optimize():
 
     # Temporarily replace sys.argv to avoid argparse issues
     original_argv = sys.argv
-    sys.argv = ["offline_optimize.py", "--rounds", "10", "--batch-size", "100", "--verbose"]
+    sys.argv = ["offline_optimize.py", "--rounds", "10", "--batch-size", "20", "--verbose"]
 
     try:
         # Run the evolution

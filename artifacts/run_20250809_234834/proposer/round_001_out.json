@@ -1,0 +1,29 @@
+{
+  "mutations": [
+    {
+      "op": "replace_rule",
+      "rule": "msg",
+      "new_definition": "phrase+"
+    },
+    {
+      "op": "rename_terminal",
+      "rule": "slot",
+      "from": "c",
+      "to": "C"
+    },
+    {
+      "op": "rename_terminal",
+      "rule": "slot",
+      "from": "h",
+      "to": "H"
+    },
+    {
+      "op": "rename_terminal",
+      "rule": "slot",
+      "from": "z",
+      "to": "Z"
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

@@ -1,0 +1,46 @@
+{
+  "model": "gpt-5",
+  "batch_size": 15,
+  "k_objects": 4,
+  "attributes": {
+    "color": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "black",
+      "white"
+    ],
+    "shape": [
+      "circle",
+      "square",
+      "triangle",
+      "star",
+      "hexagon",
+      "diamond"
+    ],
+    "size": [
+      "small",
+      "medium",
+      "large",
+      "huge"
+    ]
+  },
+  "lambdas": {
+    "len_per_char": 0.02,
+    "complexity_per_prod": 0.5,
+    "complexity_per_rhs_symbol": 0.1,
+    "collisions": 5.0,
+    "robust_factor": 0.5
+  },
+  "guards": {
+    "min_accuracy": 0.95,
+    "max_parse_fail": 0.05,
+    "max_productions": 40,
+    "max_depth": 8,
+    "max_msg_chars": 32,
+    "min_entropy_bits": 2.0
+  },
+  "final_grammar_path": "src/grammar/final_grammar.lark",
+  "fewshots_path": "fewshots/final_fewshots.json"
+}

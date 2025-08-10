@@ -1,0 +1,11 @@
+{
+  "mutations": [
+    {
+      "op": "replace_rule",
+      "name": "msg",
+      "definition": "(slot? value)+"
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

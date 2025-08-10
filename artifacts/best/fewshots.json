@@ -2,101 +2,101 @@
   "speaker": [
     {
       "scene": {
-        "target_idx": 3,
-        "objects": [
-          {
-            "color": "blue",
-            "shape": "circle",
-            "size": "large"
-          },
-          {
-            "color": "blue",
-            "shape": "star",
-            "size": "huge"
-          },
-          {
-            "color": "green",
-            "shape": "diamond",
-            "size": "medium"
-          },
-          {
-            "color": "white",
-            "shape": "triangle",
-            "size": "small"
-          }
-        ]
-      },
-      "message": "Cwhite"
-    },
-    {
-      "scene": {
         "target_idx": 1,
         "objects": [
           {
             "color": "yellow",
-            "shape": "diamond",
-            "size": "huge"
+            "shape": "square",
+            "size": "small"
           },
           {
-            "color": "black",
-            "shape": "diamond",
+            "color": "white",
+            "shape": "star",
             "size": "large"
           },
           {
-            "color": "blue",
-            "shape": "diamond",
-            "size": "huge"
+            "color": "white",
+            "shape": "hexagon",
+            "size": "small"
           },
           {
-            "color": "green",
+            "color": "yellow",
             "shape": "circle",
             "size": "medium"
           }
         ]
       },
-      "message": "C black"
+      "message": "l"
     },
     {
       "scene": {
         "target_idx": 1,
         "objects": [
           {
-            "color": "green",
-            "shape": "square",
+            "color": "black",
+            "shape": "star",
             "size": "medium"
           },
           {
-            "color": "white",
-            "shape": "hexagon",
+            "color": "green",
+            "shape": "diamond",
+            "size": "medium"
+          },
+          {
+            "color": "blue",
+            "shape": "triangle",
             "size": "huge"
           },
           {
-            "color": "white",
-            "shape": "hexagon",
-            "size": "large"
-          },
-          {
-            "color": "black",
+            "color": "red",
             "shape": "star",
             "size": "large"
           }
         ]
       },
-      "message": "Shuge"
+      "message": "g"
+    },
+    {
+      "scene": {
+        "target_idx": 3,
+        "objects": [
+          {
+            "color": "yellow",
+            "shape": "circle",
+            "size": "medium"
+          },
+          {
+            "color": "blue",
+            "shape": "square",
+            "size": "medium"
+          },
+          {
+            "color": "green",
+            "shape": "diamond",
+            "size": "small"
+          },
+          {
+            "color": "red",
+            "shape": "star",
+            "size": "large"
+          }
+        ]
+      },
+      "message": "r"
     }
   ],
   "listener": [
     {
-      "message": "Cwhite",
+      "message": "l",
+      "answer": 1
+    },
+    {
+      "message": "g",
+      "answer": 1
+    },
+    {
+      "message": "r",
       "answer": 3
-    },
-    {
-      "message": "C black",
-      "answer": 1
-    },
-    {
-      "message": "Shuge",
-      "answer": 1
     }
   ]
 }
