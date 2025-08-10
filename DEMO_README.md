@@ -16,9 +16,14 @@ Simple 3-act demo showing the evolution of communication protocols.
 python scripts/offline_optimize.py
 ```
 
-- Runs 15 rounds of evolution
+- Runs **10 rounds** of evolution (thorough optimization)
+- Uses batch size of **100** for better evaluation
+- Automatically finds the most recent run directory
 - Saves best grammar to `artifacts/best/grammar.lark`
 - Saves few-shots to `artifacts/best/fewshots.json`
+- Collects **3 few-shot examples** from the evolved grammar
+
+**Note**: The script checks if best artifacts already exist and will skip regeneration unless you delete `artifacts/best/` first.
 
 ### Act 2: Live Evolution Demo
 
@@ -42,7 +47,7 @@ python test_step3.py
 
 ## 🎯 Demo Day
 
-**Before talk**: Run Act 1
+**Before talk**: Run Act 1 (takes ~10-15 minutes)
 **On stage**: Run Act 2, then Act 3
 
 ## 📁 What Gets Created
@@ -51,10 +56,16 @@ python test_step3.py
 artifacts/
 ├── best/                    # Best artifacts for demo
 │   ├── grammar.lark        # Evolved grammar
-│   └── fewshots.json       # Few-shot examples
+│   └── fewshots.json       # Few-shot examples (3 examples)
 └── runs/                    # Run logs
-    ├── run_YYYYMMDD_HHMM/  # Offline optimization
+    ├── run_YYYYMMDD_HHMM/  # Offline optimization (10 rounds)
     └── live_TIMESTAMP/     # Live demo results
 ```
 
-That's it! Simple and clean. 🎭✨
+## ⚡ Quick Start
+
+1. **Generate artifacts**: `python scripts/offline_optimize.py`
+2. **Wait for completion** (~10-15 minutes)
+3. **Demo ready!** Best grammar and few-shots are saved
+
+The offline script automatically handles the evolution, finds the best grammar, and prepares everything needed for the live demo. 🎭✨

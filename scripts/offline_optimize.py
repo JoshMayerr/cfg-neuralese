@@ -60,9 +60,9 @@ def collect_fewshots(grammar_text: str, n_examples: int = 3):
 
 def offline_optimize():
     """Run offline optimization and save best artifacts."""
-    print("🔬 QUICK OFFLINE OPTIMIZATION (2-3 min)")
+    print("🔬 OFFLINE OPTIMIZATION (10-15 min)")
     print("=" * 50)
-    print("This will run a quick optimization (3 rounds) to find a decent grammar.")
+    print("This will run a thorough optimization (10 rounds) to find a high-quality grammar.")
     print("The results will be saved for the live demo.")
     print()
 
@@ -74,7 +74,7 @@ def offline_optimize():
 
     # Run the main evolution (this will use argparse defaults)
     print("🚀 Starting evolution...")
-    print("   (This may take a while - the system will evolve the grammar)")
+    print("   (This will take 10-15 minutes - the system will thoroughly evolve the grammar)")
     print()
 
     # We need to mock argparse for the main function
@@ -84,14 +84,14 @@ def offline_optimize():
     class MockArgs:
         def __init__(self):
             self.config = "configs/defaults.yaml"
-            self.batch_size = 50  # Smaller batch for faster processing
-            self.rounds = 3  # Just 3 rounds for quick demo
+            self.batch_size = 100  # Larger batch for better evaluation
+            self.rounds = 10  # More rounds for thorough optimization
             self.verbose = True
             self.artifacts_dir = "artifacts"
 
     # Temporarily replace sys.argv to avoid argparse issues
     original_argv = sys.argv
-    sys.argv = ["offline_optimize.py", "--rounds", "2", "--batch-size", "2", "--verbose"]
+    sys.argv = ["offline_optimize.py", "--rounds", "10", "--batch-size", "100", "--verbose"]
 
     try:
         # Run the evolution
@@ -115,7 +115,7 @@ def offline_optimize():
         print(f"\n✅ Evolution completed! Final grammar: {len(grammar_text.split())} lines")
 
         # Collect few-shot examples
-        speaker_fs, listener_fs = collect_fewshots(grammar_text, n_examples=3)
+        speaker_fs, listener_fs = collect_fewshots(grammar_text, n_examples=3)  # 3 examples is a good balance
 
         # Save best artifacts
         save_best(grammar_text, speaker_fs, listener_fs)
