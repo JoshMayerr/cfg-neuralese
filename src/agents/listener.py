@@ -1,13 +1,9 @@
-import os
 from typing import List
 from ..types import Scene
 from .openai_client import OpenAIClient
 
-def load_prompt() -> str:
-    """Load listener prompt from file."""
-    prompt_path = os.path.join(os.path.dirname(__file__), "..", "..", "prompts", "listener.txt")
-    with open(prompt_path, "r") as f:
-        return f.read().strip()
+# Inline prompt - no external file dependency
+LISTENER_PROMPT = """You are the LISTENER. Given a legal message (per the attached grammar) and the list of objects, determine which object the SPEAKER intended. Output only the zero-based index of the target."""
 
 def format_scene_for_listener(scene: Scene, message: str) -> str:
     """Format scene and message for listener prompt."""
@@ -34,13 +30,12 @@ def get_listener_prediction(grammar: str, scene: Scene, message: str) -> int:
     Returns:
         Predicted index of target object
     """
-    prompt = load_prompt()
     scene_text = format_scene_for_listener(scene, message)
 
     messages = [
         {
             "role": "system",
-            "content": f"{prompt}\n\nThe message follows this grammar:\n{grammar}"
+            "content": f"{LISTENER_PROMPT}\n\nThe message follows this grammar:\n{grammar}"
         },
         {
             "role": "user",

@@ -1,13 +1,9 @@
-import os
 from typing import List
 from ..types import Scene, SceneObj
 from .openai_client import OpenAIClient
 
-def load_prompt() -> str:
-    """Load speaker prompt from file."""
-    prompt_path = os.path.join(os.path.dirname(__file__), "..", "..", "prompts", "speaker.txt")
-    with open(prompt_path, "r") as f:
-        return f.read().strip()
+# Inline prompt - no external file dependency
+SPEAKER_PROMPT = """You are the SPEAKER. Given a target object and distractors, emit the SHORTEST legal message under the attached grammar that lets a competent LISTENER uniquely identify the target. Output only the string that matches the grammar's start rule."""
 
 def format_scene(scene: Scene) -> str:
     """Format scene for speaker prompt."""
@@ -35,13 +31,12 @@ def get_speaker_message(grammar: str, scene: Scene) -> str:
     Returns:
         Message string that should match the grammar's start rule
     """
-    prompt = load_prompt()
     scene_text = format_scene(scene)
 
     messages = [
         {
             "role": "system",
-            "content": prompt
+            "content": SPEAKER_PROMPT
         },
         {
             "role": "user",
