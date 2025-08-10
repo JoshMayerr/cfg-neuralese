@@ -1,4 +1,4 @@
-# Creating "neuralese" with context free grammars (CFG) and gpt5
+# create "neuralese" with gpt5 and context free grammars (CFG)
 
 ### project goal
 
@@ -7,6 +7,11 @@ this is a multi agent system running a loop that evolves context-free grammars t
 ### why its interesting
 
 this is a constrained example on a mini game. but this is typical in other research. it can extend to a real grammar for an entire language. this shows that if you wanted to build / learn a cfg to do neuralese you probably can. you just need to run a bigger experiment for longer
+
+### how it works
+
+![Example Round](example.png)
+the agents play a guessing game (Lewis Signaling Games) over many rounds. in each round, there are 4 options the speaker must encode in their language and send to the guesser such that the guesser will correctly decode it and select the correct option. the speaker can only send messages that follow the current CFG. after every round, the CFG is updated and optimized based on metrics below.
 
 ### commands for demo
 
@@ -20,55 +25,6 @@ uv run test_step3.py # show an example guessing round
 
 ```bash
 uv run scripts/qa.py # play a guessing game based on final CFG
-```
-
-### What It Does
-
-- **Speaker Agent**: Generates messages under CFG constraints to describe target objects
-- **Listener Agent**: Interprets messages to identify target objects from distractors
-- **Proposer Agent**: Suggests grammar mutations to optimize message length vs accuracy
-- **Evolutionary Loop**: Automatically improves grammars over multiple rounds
-
-## Current Status
-
-**Phase 2 Complete**: Evolutionary loop with proposer integration is working!
-
-- ✅ **MVP Loop**: Speaker/Listener evaluation with baseline grammar
-- ✅ **Proposer Agent**: AI-powered grammar mutation suggestions
-- ✅ **Mutation Engine**: Apply grammar transformations (rename, replace_rule, etc.)
-- ✅ **Evolutionary Loop**: Multi-round optimization with smoke testing
-- ✅ **Artifact Logging**: Track progress with CSV logs and grammar snapshots
-
-## 🏗️ System Architecture
-
-```
-
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ Scene Gen │───▶│ Speaker Agent │───▶│ Message │
-│ (K objects) │ │ (CFG-constrained)│ │ (CFG-compliant)│
-└─────────────────┘ └─────────────────┘ └─────────────────┘
-│ │ │
-▼ ▼ ▼
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ Evaluation │◀───│ Listener Agent │◀───│ Scene + Msg │
-│ (Metrics) │ │ (Target ID) │ │ │
-└─────────────────┘ └─────────────────┘ └─────────────────┘
-│
-▼
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ Proposer │───▶│ Mutation │───▶│ New Grammar │
-│ (AI-powered) │ │ Engine │ │ │
-└─────────────────┘ └─────────────────┘ └─────────────────┘
-
-```
-
-## 🎮 How to Use
-
-### Quick Test
-
-```bash
-# Test the evolution pipeline with minimal data
-uv run python test_evolution_mini.py
 ```
 
 ### Full Evolution
