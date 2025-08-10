@@ -1,0 +1,148 @@
+=== Current Grammar ===
+start: msg
+msg: phrase (phrase)*
+phrase: slot value
+slot: "C" | "H" | "S"
+value: /[a-z]+/
+
+
+=== Metrics ===
+{
+  "accuracy": 1.0,
+  "avg_msg_chars": 8.5,
+  "collisions": 0.0,
+  "parse_fail_rate": 0.0,
+  "grammar_complexity": {
+    "productions": 5,
+    "avg_rhs_symbols": 2.2
+  },
+  "n_scenes": 2,
+  "n_correct": 2,
+  "n_parse_failures": 0,
+  "examples": [
+    {
+      "scene": {
+        "target_idx": 2,
+        "objects": [
+          {
+            "color": "red",
+            "shape": "star",
+            "size": "small"
+          },
+          {
+            "color": "blue",
+            "shape": "triangle",
+            "size": "small"
+          },
+          {
+            "color": "green",
+            "shape": "triangle",
+            "size": "medium"
+          },
+          {
+            "color": "blue",
+            "shape": "diamond",
+            "size": "huge"
+          }
+        ]
+      },
+      "message": "C green",
+      "prediction": 2,
+      "correct": true
+    },
+    {
+      "scene": {
+        "target_idx": 2,
+        "objects": [
+          {
+            "color": "black",
+            "shape": "circle",
+            "size": "huge"
+          },
+          {
+            "color": "green",
+            "shape": "hexagon",
+            "size": "large"
+          },
+          {
+            "color": "red",
+            "shape": "hexagon",
+            "size": "large"
+          },
+          {
+            "color": "red",
+            "shape": "diamond",
+            "size": "huge"
+          }
+        ]
+      },
+      "message": "CredSlarge",
+      "prediction": 2,
+      "correct": true
+    }
+  ]
+}
+
+=== Examples (first 5) ===
+[
+  {
+    "scene": {
+      "target_idx": 2,
+      "objects": [
+        {
+          "color": "red",
+          "shape": "star",
+          "size": "small"
+        },
+        {
+          "color": "blue",
+          "shape": "triangle",
+          "size": "small"
+        },
+        {
+          "color": "green",
+          "shape": "triangle",
+          "size": "medium"
+        },
+        {
+          "color": "blue",
+          "shape": "diamond",
+          "size": "huge"
+        }
+      ]
+    },
+    "message": "C green",
+    "prediction": 2,
+    "correct": true
+  },
+  {
+    "scene": {
+      "target_idx": 2,
+      "objects": [
+        {
+          "color": "black",
+          "shape": "circle",
+          "size": "huge"
+        },
+        {
+          "color": "green",
+          "shape": "hexagon",
+          "size": "large"
+        },
+        {
+          "color": "red",
+          "shape": "hexagon",
+          "size": "large"
+        },
+        {
+          "color": "red",
+          "shape": "diamond",
+          "size": "huge"
+        }
+      ]
+    },
+    "message": "CredSlarge",
+    "prediction": 2,
+    "correct": true
+  }
+]

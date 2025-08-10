@@ -1,0 +1,3 @@
+round,acc,avg_len,productions,avg_rhs,collisions,parse_fail,notes
+0,1.000,10.00,5,2.40,0.000,0.000,grammar: grammar_round_0.lark
+1,1.000,10.00,5,2.40,0.000,0.000,grammar: grammar_round_1.lark

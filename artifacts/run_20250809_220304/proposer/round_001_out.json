@@ -1,0 +1,24 @@
+{
+  "mutations": [
+    {
+      "op": "rename",
+      "rule": "slot",
+      "from": "color",
+      "to": "c"
+    },
+    {
+      "op": "rename",
+      "rule": "slot",
+      "from": "shape",
+      "to": "h"
+    },
+    {
+      "op": "rename",
+      "rule": "slot",
+      "from": "size",
+      "to": "z"
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

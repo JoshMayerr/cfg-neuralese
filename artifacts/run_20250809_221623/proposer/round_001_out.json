@@ -1,0 +1,11 @@
+{
+  "mutations": [
+    {
+      "op": "replace_rule",
+      "name": "value",
+      "definition": "\"red\" | \"green\" | \"blue\" | \"black\" | \"diamond\" | \"star\" | \"triangle\" | \"hexagon\" | \"circle\" | \"small\" | \"medium\" | \"large\" | \"huge\""
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

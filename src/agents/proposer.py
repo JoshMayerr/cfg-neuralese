@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 from src.types import Scene
 from .openai_client import OpenAIClient
 
-ALLOWED_OPS = {"rename", "remove_separators", "restrict_length", "replace_rule"}
+ALLOWED_OPS = {"rename_terminal", "remove_separators", "restrict_terminal", "replace_rule"}
 
 
 def propose(
@@ -29,9 +29,20 @@ def propose(
     sys_prompt = (
         "You are the PROPOSER.\n"
         "You will receive the current grammar, evaluation metrics, and a few examples.\n"
-        "Your task: suggest a JSON patch with grammar mutations.\n\n"
+        "Your task: suggest a JSON patch with grammar mutations to COMPRESS the language while maintaining accuracy.\n\n"
+        "IMPORTANT STRATEGY:\n"
+        "- Focus on COMPRESSION: shorter messages, fewer characters\n"
+        "- Avoid making rules MORE RESTRICTIVE (this hurts compression)\n"
+        "- Prefer operations that reduce message length\n"
+        "- Keep the grammar simple and efficient\n\n"
         "Allowed operations:\n"
-        f"{', '.join(sorted(ALLOWED_OPS))}\n"
+        f"{', '.join(sorted(ALLOWED_OPS))}\n\n"
+        "OPERATION GUIDELINES:\n"
+        "- rename_terminal: Use shorter names (e.g., 'color'->'c', 'shape'->'s')\n"
+        "- remove_separators: Remove punctuation between phrases\n"
+        "- replace_rule: Simplify rule definitions, make them shorter\n"
+        "- restrict_terminal: Only use if it significantly reduces complexity\n"
+        "- restrict_length: Only use if it prevents extremely long values\n\n"
         "Output ONLY valid JSON in this format:\n"
         '{ "mutations": [ { "op": "...", ... } ], "speaker_fewshot": [], "listener_fewshot": [] }\n'
         "Do not add any text before or after the JSON."
@@ -40,9 +51,17 @@ def propose(
     # Format examples
     example_strs = []
     for i, (scene, message, pred) in enumerate(zip(scenes, messages, predictions)):
-        target_idx = scene["target_idx"]
+        # Handle both direct scenes and examples with embedded scenes
+        if "target_idx" in scene:
+            # Direct scene object
+            target_idx = scene["target_idx"]
+            target = scene["objects"][target_idx]
+        else:
+            # Example object with embedded scene
+            target_idx = scene["scene"]["target_idx"]
+            target = scene["scene"]["objects"][target_idx]
+
         correct = pred == target_idx
-        target = scene["objects"][target_idx]
 
         example_strs.append(
             f"Scene {i}: {target['color']} {target['shape']} {target['size']}\n"
@@ -102,9 +121,9 @@ def _fallback_patch() -> Dict[str, Any]:
     """Return a simple fallback patch if the proposer fails."""
     return {
         "mutations": [
-            {"op": "rename", "from": "color", "to": "c"},
-            {"op": "rename", "from": "shape", "to": "s"},
-            {"op": "rename", "from": "size", "to": "z"}
+            {"op": "rename_terminal", "from": "color", "to": "c"},
+            {"op": "rename_terminal", "from": "shape", "to": "s"},
+            {"op": "rename_terminal", "from": "size", "to": "z"}
         ],
         "speaker_fewshot": [],
         "listener_fewshot": []

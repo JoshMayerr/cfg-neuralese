@@ -1,0 +1,14 @@
+{
+  "mutations": [
+    {
+      "op": "remove_separators",
+      "separators": [
+        " ",
+        "\t",
+        "\n"
+      ]
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

@@ -7,6 +7,7 @@ to test compression while maintaining functionality.
 
 from pathlib import Path
 from typing import Dict, List, Tuple
+import re
 
 
 def rename_terminal(grammar_text: str, old: str, new: str) -> str:
@@ -19,8 +20,8 @@ def rename_terminal(grammar_text: str, old: str, new: str) -> str:
 
 def remove_separators(grammar_text: str) -> str:
     """
-    Change msg rule from semicolon-separated to whitespace-separated phrases.
-    Keeps colons between slot and value.
+    Remove semicolon separators between phrases.
+    Changes: msg: phrase (";" phrase)* -> msg: phrase (/[ \\t]+/ phrase)*
     """
     return grammar_text.replace(
         'msg: phrase (";" phrase)*',
@@ -30,10 +31,13 @@ def remove_separators(grammar_text: str) -> str:
 
 def restrict_value_length(grammar_text: str, length: int) -> str:
     """
-    Restrict value terminal to exact length.
-    Example: /[a-z]+/ -> /[a-z]{3}/
+    Restrict value length to a specific number of characters.
+    Example: restrict_value_length(3) changes /[a-z]+/ to /[a-z]{1,3}/
     """
-    return grammar_text.replace('/[a-z]+/', f'/[a-z]{{{length}}}/')
+    return grammar_text.replace(
+        'value: /[a-z]+/',
+        f'value: /[a-z]{{1,{length}}}/'
+    )
 
 
 def simplify_message_rule(grammar_text: str) -> str:
@@ -76,54 +80,6 @@ def replace_rule(grammar_text: str, rule_name: str, new_definition: str) -> str:
     return '\n'.join(lines)
 
 
-def apply_mutations_to_grammar(grammar_text: str, mutations: List[Dict]) -> Tuple[str, bool]:
-    """
-    Apply a list of mutations to a grammar.
-
-    Args:
-        grammar_text: Original Lark grammar text
-        mutations: List of mutation dictionaries with 'op' and parameters
-
-    Returns:
-        Tuple of (new_grammar_text, success)
-    """
-    result = grammar_text
-
-    for mutation in mutations:
-        op = mutation['op']
-
-        try:
-            if op == "rename":
-                result = rename_terminal(result, mutation['from'], mutation['to'])
-            elif op == "remove_separators":
-                result = remove_separators(result)
-            elif op == "restrict_length":
-                result = restrict_value_length(result, mutation['length'])
-            elif op == "simplify_message_rule":
-                result = simplify_message_rule(result)
-            elif op == "add_rule_alternative":
-                result = add_rule_alternative(result, mutation['lhs'], mutation['rhs'])
-            elif op == "replace_rule":
-                # Handle both 'name' and 'rule' parameters for compatibility
-                rule_name = mutation.get('name') or mutation.get('rule')
-                # Handle both 'definition' and 'value' parameters for compatibility
-                rule_def = mutation.get('definition') or mutation.get('value')
-                if rule_name and rule_def:
-                    result = replace_rule(result, rule_name, rule_def)
-                else:
-                    print(f"replace_rule missing parameters: {mutation}")
-                    continue
-            else:
-                print(f"Unknown operation: {op}")
-                continue
-
-        except Exception as e:
-            print(f"Mutation {op} failed: {e}")
-            return grammar_text, False
-
-    return result, True
-
-
 def apply_patch(grammar_text: str, patch: dict) -> str:
     """
     Apply a patch to grammar text. Intentionally simple and robust.
@@ -151,22 +107,65 @@ def apply_patch(grammar_text: str, patch: dict) -> str:
                 g += f"\n{m['name']}: /{m['pattern']}/\n"
             else:
                 # crude: replace any existing regex body for that rule
-                import re
                 g = re.sub(rf"({m['name']}\s*:\s*/)[^/]+(/)", rf"\1{m['pattern']}\2", g)
         elif op == "replace_rule":
-            # Replace exact rule line: 'rule: ...' with 'rule: definition'
-            import re
-            rule_name = m.get('rule') or m.get('lhs')
-            rule_def = m.get('definition') or m.get('rhs')
+            # Standardized parameter handling for replace_rule
+            # Accept multiple parameter names for compatibility
+            rule_name = m.get('name') or m.get('rule') or m.get('lhs')
+            rule_def = m.get('definition') or m.get('value') or m.get('rhs')
+
             if rule_name and rule_def:
+                # Use regex to replace the entire rule line
                 g = re.sub(rf"^{rule_name}\s*:\s*.*$", f"{rule_name}: {rule_def}", g, flags=re.MULTILINE)
             else:
                 print(f"replace_rule missing parameters: {m}")
                 continue
+        elif op == "restrict_length":
+            # Handle restrict_length operation
+            length = m.get('length')
+            if length:
+                g = restrict_value_length(g, length)
+            else:
+                print(f"restrict_length missing 'length' parameter: {m}")
+                continue
+        elif op == "simplify_message_rule":
+            g = simplify_message_rule(g)
+        elif op == "add_rule_alternative":
+            lhs = m.get('lhs') or m.get('rule')
+            rhs = m.get('rhs') or m.get('definition')
+            if lhs and rhs:
+                g = add_rule_alternative(g, lhs, rhs)
+            else:
+                print(f"add_rule_alternative missing parameters: {m}")
+                continue
         else:
             # ignore unknown ops safely
+            print(f"Unknown operation: {op}, ignoring")
             continue
     return g
+
+
+# Legacy function for backward compatibility - now just calls apply_patch
+def apply_mutations_to_grammar(grammar_text: str, mutations: List[Dict]) -> Tuple[str, bool]:
+    """
+    Apply a list of mutations to a grammar.
+
+    DEPRECATED: Use apply_patch instead.
+
+    Args:
+        grammar_text: Original Lark grammar text
+        mutations: List of mutation dictionaries with 'op' and parameters
+
+    Returns:
+        Tuple of (new_grammar_text, success)
+    """
+    try:
+        patch = {"mutations": mutations}
+        result = apply_patch(grammar_text, patch)
+        return result, True
+    except Exception as e:
+        print(f"Mutation application failed: {e}")
+        return grammar_text, False
 
 
 if __name__ == "__main__":
@@ -197,8 +196,3 @@ if __name__ == "__main__":
     grammar_text = restrict_value_length(grammar_text, 3)
     print(grammar_text)
     print()
-
-    # Save as new version
-    new_path = Path("src/grammar/manual_patch.lark")
-    new_path.write_text(grammar_text)
-    print(f"Manual grammar patch saved to {new_path}")

@@ -1,0 +1,21 @@
+{
+  "mutations": [
+    {
+      "op": "rename_terminal",
+      "from": "color",
+      "to": "c"
+    },
+    {
+      "op": "rename_terminal",
+      "from": "shape",
+      "to": "p"
+    },
+    {
+      "op": "rename_terminal",
+      "from": "size",
+      "to": "z"
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

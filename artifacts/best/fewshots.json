@@ -2,29 +2,101 @@
   "speaker": [
     {
       "scene": {
-        "color": "white",
-        "shape": "triangle",
-        "size": "medium"
+        "target_idx": 3,
+        "objects": [
+          {
+            "color": "blue",
+            "shape": "circle",
+            "size": "large"
+          },
+          {
+            "color": "blue",
+            "shape": "star",
+            "size": "huge"
+          },
+          {
+            "color": "green",
+            "shape": "diamond",
+            "size": "medium"
+          },
+          {
+            "color": "white",
+            "shape": "triangle",
+            "size": "small"
+          }
+        ]
       },
-      "message": "size:medium"
+      "message": "Cwhite"
     },
     {
       "scene": {
-        "color": "red",
-        "shape": "circle",
-        "size": "small"
+        "target_idx": 1,
+        "objects": [
+          {
+            "color": "yellow",
+            "shape": "diamond",
+            "size": "huge"
+          },
+          {
+            "color": "black",
+            "shape": "diamond",
+            "size": "large"
+          },
+          {
+            "color": "blue",
+            "shape": "diamond",
+            "size": "huge"
+          },
+          {
+            "color": "green",
+            "shape": "circle",
+            "size": "medium"
+          }
+        ]
       },
-      "message": "color:red"
+      "message": "C black"
+    },
+    {
+      "scene": {
+        "target_idx": 1,
+        "objects": [
+          {
+            "color": "green",
+            "shape": "square",
+            "size": "medium"
+          },
+          {
+            "color": "white",
+            "shape": "hexagon",
+            "size": "huge"
+          },
+          {
+            "color": "white",
+            "shape": "hexagon",
+            "size": "large"
+          },
+          {
+            "color": "black",
+            "shape": "star",
+            "size": "large"
+          }
+        ]
+      },
+      "message": "Shuge"
     }
   ],
   "listener": [
     {
-      "message": "size:medium",
+      "message": "Cwhite",
       "answer": 3
     },
     {
-      "message": "color:red",
-      "answer": 0
+      "message": "C black",
+      "answer": 1
+    },
+    {
+      "message": "Shuge",
+      "answer": 1
     }
   ]
 }

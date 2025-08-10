@@ -1,0 +1,22 @@
+{
+  "mutations": [
+    {
+      "op": "replace_rule",
+      "name": "slot",
+      "definition": "\"c\" | \"h\" | \"z\""
+    },
+    {
+      "op": "replace_rule",
+      "name": "phrase",
+      "definition": "slot value"
+    },
+    {
+      "op": "restrict_length",
+      "rule": "value",
+      "min": 1,
+      "max": 10
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

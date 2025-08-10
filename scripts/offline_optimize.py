@@ -3,16 +3,16 @@
 import sys
 from pathlib import Path
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Add project root to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from main import main as run_evolution
-from artifacts.save_best import save_best
-from artifacts.io import load_text, load_json
-from env.scenes import make_batch
-from loop.evaluate import evaluate
-from agents.speaker import speak
-from agents.listener import listen
+from src.artifacts.save_best import save_best
+from src.artifacts.io import load_text, load_json
+from src.env.scenes import make_batch
+from src.loop.evaluate import evaluate
+from src.agents.speaker import speak
+from src.agents.listener import listen
 
 
 def collect_fewshots(grammar_text: str, n_examples: int = 3):
@@ -60,9 +60,9 @@ def collect_fewshots(grammar_text: str, n_examples: int = 3):
 
 def offline_optimize():
     """Run offline optimization and save best artifacts."""
-    print("🔬 OFFLINE OPTIMIZATION")
+    print("🔬 QUICK OFFLINE OPTIMIZATION (2-3 min)")
     print("=" * 50)
-    print("This will run a longer optimization to find the best grammar.")
+    print("This will run a quick optimization (3 rounds) to find a decent grammar.")
     print("The results will be saved for the live demo.")
     print()
 
@@ -84,23 +84,31 @@ def offline_optimize():
     class MockArgs:
         def __init__(self):
             self.config = "configs/defaults.yaml"
-            self.batch_size = None
-            self.rounds = 15  # More rounds for offline optimization
+            self.batch_size = 50  # Smaller batch for faster processing
+            self.rounds = 3  # Just 3 rounds for quick demo
             self.verbose = True
             self.artifacts_dir = "artifacts"
 
     # Temporarily replace sys.argv to avoid argparse issues
     original_argv = sys.argv
-    sys.argv = ["offline_optimize.py", "--rounds", "15", "--verbose"]
+    sys.argv = ["offline_optimize.py", "--rounds", "2", "--batch-size", "2", "--verbose"]
 
     try:
         # Run the evolution
         run_evolution()
 
-        # Load the final grammar
-        final_grammar_path = Path("artifacts/final_grammar.lark")
+        # Load the final grammar from the run directory
+        # Find the most recent run directory
+        run_dirs = list(Path("artifacts").glob("run_*"))
+        if not run_dirs:
+            print("❌ No run directories found!")
+            return
+
+        latest_run = max(run_dirs, key=lambda p: p.stat().st_mtime)
+        final_grammar_path = latest_run / "final_grammar.lark"
+
         if not final_grammar_path.exists():
-            print("❌ Evolution didn't produce a final grammar!")
+            print(f"❌ Evolution didn't produce a final grammar in {latest_run}!")
             return
 
         grammar_text = final_grammar_path.read_text()

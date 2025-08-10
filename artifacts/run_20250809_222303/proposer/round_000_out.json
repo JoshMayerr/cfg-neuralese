@@ -1,0 +1,34 @@
+{
+  "mutations": [
+    {
+      "op": "rename_terminal",
+      "rule": "slot",
+      "from": "color",
+      "to": "C"
+    },
+    {
+      "op": "rename_terminal",
+      "rule": "slot",
+      "from": "shape",
+      "to": "H"
+    },
+    {
+      "op": "rename_terminal",
+      "rule": "slot",
+      "from": "size",
+      "to": "S"
+    },
+    {
+      "op": "replace_rule",
+      "name": "phrase",
+      "definition": "slot value"
+    },
+    {
+      "op": "replace_rule",
+      "name": "msg",
+      "definition": "phrase (phrase)*"
+    }
+  ],
+  "speaker_fewshot": [],
+  "listener_fewshot": []
+}

@@ -183,8 +183,8 @@ def main():
             # derive tiny few-shots from this round's successful examples
             best_fewshots = fewshots_from_examples(examples)
 
-        # Check stopping criteria
-        if metrics['accuracy'] >= 0.97 and metrics['avg_msg_chars'] <= 10:
+        # Check stopping criteria (made stricter to force proposer to work)
+        if metrics['accuracy'] >= 0.97 and metrics['avg_msg_chars'] <= 6:
             print("✅ Stopping criteria met!")
             break
 
@@ -216,7 +216,7 @@ def main():
             (Path(run_dir) / "proposer" / f"round_{round_idx:03d}_out.json").write_text(json.dumps(patch, indent=2))
 
             # Quick validation
-            ok_ops = {"rename_terminal", "remove_separators", "restrict_terminal", "replace_rule"}
+            ok_ops = {"rename_terminal", "remove_separators", "restrict_terminal", "replace_rule", "restrict_length", "simplify_message_rule", "add_rule_alternative"}
             muts = patch.get("mutations", [])
             if not isinstance(muts, list) or any(m.get("op") not in ok_ops for m in muts):
                 print("⚠️ Invalid patch, skipping")
@@ -227,7 +227,7 @@ def main():
 
             # Smoke test the candidate
             print("🧪 Smoke testing candidate grammar...")
-            smoke_metrics, _ = evaluate(grammar_candidate, scenes[:20], return_examples=False)
+            smoke_metrics = evaluate(grammar_candidate, scenes[:20], return_examples=False)
 
             if smoke_metrics["parse_fail_rate"] > 0.05:
                 print("⛔ Parse fails too high; rejecting patch")
