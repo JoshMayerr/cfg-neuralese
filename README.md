@@ -6,7 +6,7 @@ this is a multi agent system running a loop that evolves context-free grammars t
 
 ### why its interesting
 
-this is a constrained example on a mini game. but this is typical in other research. it can extend to a real grammar for an entire language. this shows that if you wanted to build / learn a cfg to do neuralese you probably can. you just need to run a bigger experiment for longer
+this is a constrained example on a mini game. but this experiment seems to be standard in other research. according to them, if this mini game works, it can extend to a real grammar for an entire language. this shows that if you wanted to build / learn a cfg to do neuralese you probably can. you just need to run a bigger experiment for longer
 
 ### how it works
 
