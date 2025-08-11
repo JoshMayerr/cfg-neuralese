@@ -2,7 +2,7 @@
 
 ### project goal
 
-this is a multi agent system running a loop that evolves context-free grammars to optimize communication between GPT-5 agents. The system automatically discovers shorter, more efficient message formats while maintaining high accuracy.
+this is a multi agent system running a loop that evolves context-free grammars to optimize communication between GPT-5 agents. The system automatically discovers shorter, more efficient message formats while maintaining high accuracy
 
 ### why its interesting
 
